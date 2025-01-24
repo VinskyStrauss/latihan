@@ -1,0 +1,43 @@
+<div class="container">
+  <h1>Simple Enigma Machine</h1>
+  <div class="rotors">
+    <!--Create select for the rotor based on the alphabet-->
+    <h3>Rotor 1:</h3>
+    <select id="rotor1" class="rotor" [value]="firstRotorSetting">
+      <!--Create the option based on the alphabet-->
+      @for(char of alphabet; track $index){
+      <option value="{{char}}">{{char}}</option>
+      }
+    </select>
+
+    <h3>Rotor 2:</h3>
+    <select id="rotor2" class="rotor" [value]="secondRotorSetting">
+      @for(char of alphabet; track $index){
+      <option value="{{char}}">{{char}}</option>
+      }
+    </select>
+
+    <h3>Rotor 3:</h3>
+    <select id="rotor3" class="rotor" [value]="thirdRotorSetting">
+      @for(char of alphabet; track $index){
+      <option value="{{char}}">{{char}}</option>
+      }
+    </select>
+  </div>
+  <form>
+    <div class="input">
+      <h3>Original Message:</h3>
+      <!--Make input that uses my host listener-->
+      <input
+        class="original"
+        onkeyup="this.value = this.value.toUpperCase();"
+        (onkeyup)="handleKeyboardEvent($event)"
+      />
+    </div>
+
+    <div class="output">
+      <h3>Encrypted Message:</h3>
+      <input class="encrypted" value="{{encryptedMessage}}" disabled />
+    </div>
+  </form>
+</div>
