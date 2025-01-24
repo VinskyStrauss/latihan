@@ -62,8 +62,7 @@ export class EnigmaComponent {
   encryptedMessage: string = '';
 
   encrypt(character: string) {
-    console.log('Encrypting message...');
-
+    //Console log the
     // Encrypt the character and append it to the encrypted message
     const encryptedChar = this.enigmaMachine.encryptMessage(character);
     this.encryptedMessage += encryptedChar;
@@ -90,6 +89,15 @@ export class EnigmaComponent {
     }
     //Handle if key backspace is pressed
     else if (event.key === 'Backspace') {
+      //If the encrypted message is empty, return
+      if (this.encryptedMessage === '') {
+        return;
+      }
+      //IF the last character is a space, just remove the space from the encrypted messageand dont increment the rotor position
+      if (this.encryptedMessage.slice(-1) === ' ') {
+        this.encryptedMessage = this.encryptedMessage.slice(0, -1);
+        return;
+      }
       //Remove the last character from the encrypted message
       this.encryptedMessage = this.encryptedMessage.slice(0, -1);
       //Call encrypt function to update the rotor position

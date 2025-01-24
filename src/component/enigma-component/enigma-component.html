@@ -24,20 +24,19 @@
       }
     </select>
   </div>
-  <form>
-    <div class="input">
-      <h3>Original Message:</h3>
-      <!--Make input that uses my host listener-->
-      <input
-        class="original"
-        onkeyup="this.value = this.value.toUpperCase();"
-        (onkeyup)="handleKeyboardEvent($event)"
-      />
-    </div>
 
-    <div class="output">
-      <h3>Encrypted Message:</h3>
-      <input class="encrypted" value="{{encryptedMessage}}" disabled />
-    </div>
-  </form>
+  <div class="input">
+    <h3>Original Message:</h3>
+    <!--Make input that uses my host listener-->
+    <input
+      class="original"
+      onkeyup="this.value = this.value.toUpperCase();"
+      (onkeyup)="handleKeyboardEvent($event)"
+    />
+  </div>
+
+  <div class="output">
+    <h3>En-/Decrypted Message:</h3>
+    <input class="encrypted" value="{{encryptedMessage}}" disabled />
+  </div>
 </div>
