@@ -61,25 +61,32 @@ export class EnigmaComponent {
   //Variable for encrypted message
   encryptedMessage: string = '';
 
-  encrypt(character: string) {
-    //Console log the
-    // Encrypt the character and append it to the encrypted message
-    const encryptedChar = this.enigmaMachine.encryptMessage(character);
-    this.encryptedMessage += encryptedChar;
-    // Check if the character is a valid alphabet letter
+  updateRotorPosition() {
+    // Update the Rotor
     this.rotor1 = this.enigmaMachine.rotors[0];
     this.rotor2 = this.enigmaMachine.rotors[1];
     this.rotor3 = this.enigmaMachine.rotors[2];
+  }
 
+  updateRotorSetting() {
     //Update the rotors settings
     this.firstRotorSetting = this.alphabet.charAt(this.rotor1.position);
     this.secondRotorSetting = this.alphabet.charAt(this.rotor2.position);
     this.thirdRotorSetting = this.alphabet.charAt(this.rotor3.position);
   }
+
+  encrypt(character: string) {
+    // Encrypt the character and append it to the encrypted message
+    const encryptedChar = this.enigmaMachine.encryptMessage(character);
+    this.encryptedMessage += encryptedChar;
+    // Update the rotor position
+    this.updateRotorPosition();
+    // Update the rotor setting
+    this.updateRotorSetting();
+  }
   //Create event listener for keyUp
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: any) {
-    console.log('Key Pressed: ', event.key);
     //Get the key pressed
     const key = event.key.toUpperCase();
     //Check if the key is an alphabet
@@ -102,15 +109,10 @@ export class EnigmaComponent {
       this.encryptedMessage = this.encryptedMessage.slice(0, -1);
       //Call encrypt function to update the rotor position
       this.enigmaMachine.handleBackspace();
-      // Check if the character is a valid alphabet letter
-      this.rotor1 = this.enigmaMachine.rotors[0];
-      this.rotor2 = this.enigmaMachine.rotors[1];
-      this.rotor3 = this.enigmaMachine.rotors[2];
-
-      //Update the rotors settings
-      this.firstRotorSetting = this.alphabet.charAt(this.rotor1.position);
-      this.secondRotorSetting = this.alphabet.charAt(this.rotor2.position);
-      this.thirdRotorSetting = this.alphabet.charAt(this.rotor3.position);
+      //Update the rotor position
+      this.updateRotorPosition();
+      //Update the rotor setting
+      this.updateRotorSetting();
     } else if (event.key === ' ') {
       this.encryptedMessage += ' ';
     }
