@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  effect,
 } from '@angular/core';
 import { Rotor } from '../../model/rotor.model';
 import { Enigma } from '../../model/enigma.model';
@@ -13,20 +14,31 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './enigma-component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule],
+  imports: [],
 })
 export class EnigmaComponent {
   //Alphabet for the Enigma Machine
   alphabet: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  //Rotor Settings
-  firstRotorSetting: string = 'M';
-  secondRotorSetting: string = 'C';
-  thirdRotorSetting: string = 'K';
 
+  //Rotor Settings
+  firstRotorSetting: string = '';
+  secondRotorSetting: string = '';
+  thirdRotorSetting: string = '';
   //Find the Rotor Position
   firstRotorPosition: number = this.alphabet.indexOf(this.firstRotorSetting);
   secondRotorPosition: number = this.alphabet.indexOf(this.secondRotorSetting);
   thirdRotorPosition: number = this.alphabet.indexOf(this.thirdRotorSetting);
+  //Get The Setting for the Rotor
+  getSetting() {
+    let settings = (<HTMLInputElement>document.getElementById('rotorSetting'))
+      .value;
+    this.firstRotorSetting = settings[0];
+    this.secondRotorSetting = settings[1];
+    this.thirdRotorSetting = settings[2];
+    this.rotor1.position = this.alphabet.indexOf(settings[0]);
+    this.rotor2.position = this.alphabet.indexOf(settings[1]);
+    this.rotor3.position = this.alphabet.indexOf(settings[2]);
+  }
   //Create the Rotor
   //Left Rotor
   rotor1: Rotor = new Rotor(
@@ -77,6 +89,8 @@ export class EnigmaComponent {
 
   encrypt(character: string) {
     // Encrypt the character and append it to the encrypted message
+    console.log('Encrypting');
+    console.log('Enigma Machine: ', this.enigmaMachine);
     const encryptedChar = this.enigmaMachine.encryptMessage(character);
     this.encryptedMessage += encryptedChar;
     // Update the rotor position
@@ -85,36 +99,41 @@ export class EnigmaComponent {
     this.updateRotorSetting();
   }
   //Create event listener for keyUp
+  //Check if the input is focused or not
+  focus: boolean = false;
+  //Make only the input not the whole document
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: any) {
-    //Get the key pressed
-    const key = event.key.toUpperCase();
-    //Check if the key is an alphabet
-    if (this.alphabet.includes(key)) {
-      //Encrypt the message
-      this.encrypt(key);
-    }
-    //Handle if key backspace is pressed
-    else if (event.key === 'Backspace') {
-      //If the encrypted message is empty, return
-      if (this.encryptedMessage === '') {
-        return;
+    if (this.focus) {
+      //Get the key pressed
+      const key = event.key.toUpperCase();
+      //Check if the key is an alphabet
+      if (this.alphabet.includes(key)) {
+        //Encrypt the message
+        this.encrypt(key);
       }
-      //IF the last character is a space, just remove the space from the encrypted messageand dont increment the rotor position
-      if (this.encryptedMessage.slice(-1) === ' ') {
+      //Handle if key backspace is pressed
+      else if (event.key === 'Backspace') {
+        //If the encrypted message is empty, return
+        if (this.encryptedMessage === '') {
+          return;
+        }
+        //IF the last character is a space, just remove the space from the encrypted messageand dont increment the rotor position
+        if (this.encryptedMessage.slice(-1) === ' ') {
+          this.encryptedMessage = this.encryptedMessage.slice(0, -1);
+          return;
+        }
+        //Remove the last character from the encrypted message
         this.encryptedMessage = this.encryptedMessage.slice(0, -1);
-        return;
+        //Call encrypt function to update the rotor position
+        this.enigmaMachine.handleBackspace();
+        //Update the rotor position
+        this.updateRotorPosition();
+        //Update the rotor setting
+        this.updateRotorSetting();
+      } else if (event.key === ' ') {
+        this.encryptedMessage += ' ';
       }
-      //Remove the last character from the encrypted message
-      this.encryptedMessage = this.encryptedMessage.slice(0, -1);
-      //Call encrypt function to update the rotor position
-      this.enigmaMachine.handleBackspace();
-      //Update the rotor position
-      this.updateRotorPosition();
-      //Update the rotor setting
-      this.updateRotorSetting();
-    } else if (event.key === ' ') {
-      this.encryptedMessage += ' ';
     }
   }
 }

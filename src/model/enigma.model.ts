@@ -40,12 +40,12 @@ export class Enigma {
 
   //Pass the character through the rotors
   private passThroughRotor(
-    characterAscii: number,
+    characterIndex: number,
     rotor: Rotor,
     reverse: boolean
   ): number {
     if (!reverse) {
-      const index = (characterAscii + rotor.position) % 26; // 11 + 4 = 15 // 1 + 11 = 12
+      const index = (characterIndex + rotor.position) % 26; // 11 + 4 = 15 // 1 + 11 = 12
       const characterInRotorWire = rotor.wiring.charAt(index); // 'E' // 'Z'
 
       const indexToPassThroughNextRotor =
@@ -58,7 +58,7 @@ export class Enigma {
     }
 
     const characterInAlphabet = this.alphabet.charAt(
-      (characterAscii + rotor.position) % 26
+      (characterIndex + rotor.position) % 26
     );
     const indexInRotorWiring = rotor.wiring.indexOf(characterInAlphabet);
     return (indexInRotorWiring - rotor.position + 26) % 26;
@@ -86,31 +86,31 @@ export class Enigma {
       let character = message.charAt(i);
       this.rotateRotor(true);
 
-      let characterAscii = this.alphabet.indexOf(character);
+      let characterIndex = this.alphabet.indexOf(character);
       //Pass through the rotors from right to left
       for (let j = this._rotors.length - 1; j >= 0; j--) {
-        characterAscii = this.passThroughRotor(
-          characterAscii,
+        characterIndex = this.passThroughRotor(
+          characterIndex,
           this._rotors[j],
           false
         );
       }
 
       //Pass through the reflector
-      characterAscii = this.passThroughReflector(characterAscii);
-      if (characterAscii === -1) {
+      characterIndex = this.passThroughReflector(characterIndex);
+      if (characterIndex === -1) {
         throw new Error('Error No character found in reflector');
       }
 
       //Pass through the rotors from left to right
       for (let j = 0; j < this._rotors.length; j++) {
-        characterAscii = this.passThroughRotor(
-          characterAscii,
+        characterIndex = this.passThroughRotor(
+          characterIndex,
           this._rotors[j],
           true
         );
       }
-      character = this.alphabet.charAt(characterAscii);
+      character = this.alphabet.charAt(characterIndex);
       encryptedMessage += character;
     }
 

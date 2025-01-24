@@ -6,13 +6,28 @@
   gap: 20px;
 }
 
+button {
+  height: 50px;
+  width: 75px;
+}
+
+.rotorConfig {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: 100px;
+  width: 650px;
+}
 .rotors {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
   height: 100px;
+  width: 650px;
 }
 
 input {
